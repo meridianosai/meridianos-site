@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.github
+docs
+.env
+.env.local
+.env.*.local
+*.md
+.DS_Store
+npm-debug.log*

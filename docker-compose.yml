@@ -1,0 +1,48 @@
+# landing-page 部署:不自带 PostgreSQL,接入 meridian-ai 的共享 PG(外部网络 meridian_default),
+# 落在独立库 meridian_landing。migrate 服务先建库 + 迁移,web 依赖其成功后再起。
+name: meridian-site
+
+x-app-environment: &app-environment
+  # 容器内经容器名 postgres 访问共享 PG(参照 bff 拓扑)
+  DATABASE_URL: postgresql://${POSTGRES_USER:-meridian}:${POSTGRES_PASSWORD:-meridian_password}@postgres:5432/${SITE_DB:-meridian_landing}
+  NODE_ENV: production
+
+services:
+  migrate:
+    image: meridian-site-migrator:${SITE_IMAGE_TAG:-local}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    restart: "no"
+    env_file:
+      - .env
+    environment:
+      <<: *app-environment
+    networks:
+      - shared
+
+  web:
+    image: meridian-site:${SITE_IMAGE_TAG:-local}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      <<: *app-environment
+    ports:
+      - "${SITE_APP_PORT:-3005}:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - shared
+
+networks:
+  # meridian-ai(compose name: meridian)默认创建的网络,承载共享 postgres
+  shared:
+    external: true
+    name: meridian_default
