@@ -17,7 +17,7 @@ export function SiteFooter() {
           <div className="fc-col fc-qrs">
             <div className="fc-qr">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/chuhaicha-qr.jpg" alt="出海查AI 小程序码" />
+              <img src="/chuhaicha-qr.jpg" alt="出海查AI 小程序码" loading="lazy" decoding="async" />
               <span>
                 扫码免费用
                 <br />
@@ -26,7 +26,7 @@ export function SiteFooter() {
             </div>
             <div className="fc-qr">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/wechat-qr.jpg" alt="创始人微信" />
+              <img src="/wechat-qr.jpg" alt="创始人微信" loading="lazy" decoding="async" />
               <span>
                 加创始人微信
                 <br />

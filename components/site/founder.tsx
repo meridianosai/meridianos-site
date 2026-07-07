@@ -9,6 +9,8 @@ export function Founder() {
           <img
             src="/founder-photo.jpg"
             alt="周玉林 · 子午纪创始人 · 路演日 / 奇绩创坛 / Antler"
+            loading="lazy"
+            decoding="async"
           />
         </div>
         <div className="founder-copy">

@@ -166,7 +166,7 @@ export function Chuhaicha() {
             <div className="qr-row">
               <div className="qr-slot">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/chuhaicha-qr.jpg" alt="出海查AI 小程序码" />
+                <img src="/chuhaicha-qr.jpg" alt="出海查AI 小程序码" loading="lazy" decoding="async" />
               </div>
               <div className="qr-note">
                 <b>微信扫一扫</b>,或搜索小程序

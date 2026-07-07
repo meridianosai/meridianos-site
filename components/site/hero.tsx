@@ -195,9 +195,13 @@ export function Hero() {
             。从零起步的团队用它搭线,已有打法的团队用它复刻。
           </p>
           <div className="hero-ctas">
-            <button
+            <a
               className="btn-primary"
-              onClick={() => scrollToId("chuhaicha")}
+              href="#chuhaicha"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToId("chuhaicha");
+              }}
             >
               <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
                 <path
@@ -208,11 +212,18 @@ export function Hero() {
                 <circle cx="8" cy="12" r="1" fill="currentColor" />
               </svg>
               出海查 AI · 已上线
-            </button>
-            <button className="btn-ghost" onClick={() => scrollToId("flow")}>
+            </a>
+            <a
+              className="btn-ghost"
+              href="#flow"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToId("flow");
+              }}
+            >
               <span className="dot" />
               看完整拓客流程
-            </button>
+            </a>
           </div>
           <div className="hero-stats">
             <div className="s">

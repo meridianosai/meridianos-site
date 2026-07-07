@@ -2719,7 +2719,7 @@ section {
   position: sticky;
   top: 88px;
 }
-.wl-card h3 {
+.wl-card h2 {
   font-family: var(--serif);
   font-weight: 700;
   font-size: 20px;

@@ -60,7 +60,7 @@ export function Waitlist() {
           <div className="coord" style={{ justifyContent: "center" }}>
             内测席位 · 每月少量
           </div>
-          <h3>排队进入拓客引擎内测</h3>
+          <h2>排队进入拓客引擎内测</h2>
           <p>留下联系方式,上线时第一批通知你。现有出海查用户优先。</p>
 
           {status === "done" ? (

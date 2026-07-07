@@ -13,6 +13,10 @@ FROM base AS builder
 ENV NODE_ENV=production
 # build 不连库(client 为 lazy),给合法占位即可
 ENV DATABASE_URL=postgresql://build:build@localhost:5432/build
+ARG NEXT_PUBLIC_SITE_URL=https://meridianos.ai
+ARG NEXT_PUBLIC_SEO_NOINDEX=false
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_SEO_NOINDEX=$NEXT_PUBLIC_SEO_NOINDEX
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
