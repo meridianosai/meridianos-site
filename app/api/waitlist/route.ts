@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/db/client";
 import { waitlistSignups } from "@/lib/db/schema";
+import { notifyWaitlistSignup } from "@/lib/feishu";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -51,6 +52,13 @@ export async function POST(request: Request) {
       name: name || null,
       userAgent: request.headers.get("user-agent") ?? null,
     });
+
+    try {
+      await notifyWaitlistSignup({ contact, company, name });
+    } catch (notifyErr) {
+      console.error("[waitlist] feishu notify failed", notifyErr);
+    }
+
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (err) {
     console.error("[waitlist] insert failed", err);

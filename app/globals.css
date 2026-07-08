@@ -218,6 +218,12 @@
 .nav-links a:hover {
   color: var(--ink);
 }
+.nav-ctas {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
 .nav-cta {
   font-size: 13.5px;
   padding: 9px 18px;
@@ -225,6 +231,7 @@
   background: var(--ink);
   color: var(--paper);
   transition: background 0.18s, transform 0.18s;
+  white-space: nowrap;
 }
 .nav-cta:hover {
   background: #000;
@@ -233,6 +240,13 @@
 @media (max-width: 820px) {
   .nav-links {
     display: none;
+  }
+  .nav-ctas {
+    gap: 6px;
+  }
+  .nav-cta {
+    font-size: 12px;
+    padding: 8px 12px;
   }
 }
 

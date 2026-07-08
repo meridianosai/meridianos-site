@@ -38,9 +38,14 @@ export function SiteNav() {
           <a href="#flow">拓客全流程</a>
           <a href="#founder">关于我们</a>
         </div>
-        <button className="nav-cta" onClick={() => scrollToId("chuhaicha")}>
-          免费用出海查
-        </button>
+        <div className="nav-ctas">
+          <button className="nav-cta" onClick={() => scrollToId("chuhaicha")}>
+            免费用出海查
+          </button>
+          <button className="nav-cta" onClick={() => scrollToId("principles")}>
+            申请拓客引擎内测
+          </button>
+        </div>
       </div>
     </nav>
   );
