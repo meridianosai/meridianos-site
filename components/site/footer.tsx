@@ -57,7 +57,11 @@ export function SiteFooter() {
 
         <div className="foot-b">
           <span>© 2026 子午纪 Meridian · MeridianOS, Inc.</span>
-          <span className="mono">CHINA — WORLDWIDE</span>
+          <span className="foot-legal">
+            <a href="/privacy">隐私政策</a>
+            <a href="/terms">服务条款</a>
+            <span className="mono">CHINA — WORLDWIDE</span>
+          </span>
         </div>
       </div>
     </footer>
