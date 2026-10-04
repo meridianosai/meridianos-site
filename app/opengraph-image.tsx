@@ -1,13 +1,13 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-export const alt = "子午纪 Meridian — 出海全流程拓客引擎";
+export const alt = "子午纪 Meridian · 人，在信号的另一端";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 // OG 图用到的全部字符(传给 Google Fonts text= 以取最小子集)
 const GLYPHS =
-  "子午纪 Meridian不等询盘上门，主动把海外客户谈进来。出海查AI·拓客引擎meridianos.ai";
+  "子午纪 Meridian人，在信号的另一端。让天下没有难做的海外生意meridianos.ai";
 
 // 用旧 UA 让 Google Fonts 返回 satori 可用的 ttf(而非 woff2)
 async function loadFont(weight: number, text: string): Promise<ArrayBuffer> {
@@ -77,10 +77,9 @@ export default async function OpengraphImage() {
             lineHeight: 1.28,
           }}
         >
-          <div style={{ display: "flex" }}>不等询盘上门，</div>
+          <div style={{ display: "flex" }}>人，</div>
           <div style={{ display: "flex" }}>
-            <span style={{ color: "#3E63DD" }}>主动</span>
-            把海外客户谈进来。
+            在<span style={{ color: "#2B59B0" }}>信号</span>的另一端。
           </div>
         </div>
 
@@ -95,8 +94,8 @@ export default async function OpengraphImage() {
             color: "#4A5268",
           }}
         >
-          <div style={{ display: "flex" }}>出海查 AI · 拓客引擎</div>
-          <div style={{ display: "flex", color: "#3E63DD" }}>meridianos.ai</div>
+          <div style={{ display: "flex" }}>让天下没有难做的海外生意</div>
+          <div style={{ display: "flex", color: "#2B59B0" }}>meridianos.ai</div>
         </div>
       </div>
     ),

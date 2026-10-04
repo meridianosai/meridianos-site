@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Noto_Serif_SC, JetBrains_Mono } from "next/font/google";
+import { Noto_Serif_SC } from "next/font/google";
 import "./globals.css";
 import {
   SITE_URL,
@@ -14,26 +14,13 @@ import {
   THEME_COLOR,
 } from "@/lib/seo";
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
+// 只有标题用衬线；正文走系统中文字体（与 fleet web-next 一致），不再加载 Inter / JetBrains Mono。
 // CJK 字体体量大,不预加载(否则 next/font 需要显式 subset),用 swap 避免阻塞首屏
 const notoSerifSC = Noto_Serif_SC({
-  weight: ["600", "700", "900"],
+  weight: ["700", "900"],
   variable: "--font-noto-serif",
   display: "swap",
   preload: false,
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-jetbrains",
-  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -89,7 +76,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
-      className={`${inter.variable} ${notoSerifSC.variable} ${jetbrainsMono.variable}`}
+      className={notoSerifSC.variable}
     >
       <body>
         <noscript>

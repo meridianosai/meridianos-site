@@ -4,8 +4,8 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="wrap">
-        <Reveal as="div" className="foot-slog">
-          让每一个中国团队,
+        <Reveal as="p" className="foot-slog">
+          让每一个中国团队，
           <br />
           跟海外<em>本地老兵</em>一样能打。
         </Reveal>
@@ -14,10 +14,10 @@ export function SiteFooter() {
         </Reveal>
 
         <Reveal className="foot-contact">
-          <div className="fc-col fc-qrs">
+          <div className="fc-qrs">
             <div className="fc-qr">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/chuhaicha-qr.jpg" alt="出海查AI 小程序码" loading="lazy" decoding="async" />
+              <img src="/chuhaicha-qr.jpg" alt="出海查AI 小程序码" width={84} height={84} loading="lazy" decoding="async" />
               <span>
                 扫码免费用
                 <br />
@@ -26,7 +26,7 @@ export function SiteFooter() {
             </div>
             <div className="fc-qr">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/wechat-qr.jpg" alt="创始人微信" loading="lazy" decoding="async" />
+              <img src="/wechat-qr.jpg" alt="创始人微信二维码" width={84} height={84} loading="lazy" decoding="async" />
               <span>
                 加创始人微信
                 <br />
@@ -34,34 +34,33 @@ export function SiteFooter() {
               </span>
             </div>
           </div>
-          <div className="fc-col fc-info">
+          <div className="fc-info">
             <div className="fc-row">
               <span className="fc-k">公司</span>
-              <span className="fc-v">
+              <span>
                 MeridianOS, Inc.
                 <span className="fc-sub">Delaware C-Corp</span>
               </span>
             </div>
             <div className="fc-row">
               <span className="fc-k">邮箱</span>
-              <a className="fc-v fc-link" href="mailto:info@meridianos.ai">
+              <a className="fc-link" href="mailto:info@meridianos.ai">
                 info@meridianos.ai
               </a>
             </div>
             <div className="fc-row">
               <span className="fc-k">微信</span>
-              <span className="fc-v">leo971217</span>
+              <span>leo971217</span>
             </div>
           </div>
         </Reveal>
 
         <div className="foot-b">
           <span>© 2026 子午纪 Meridian · MeridianOS, Inc.</span>
-          <span className="foot-legal">
+          <nav aria-label="法律">
             <a href="/privacy">隐私政策</a>
             <a href="/terms">服务条款</a>
-            <span className="mono">CHINA — WORLDWIDE</span>
-          </span>
+          </nav>
         </div>
       </div>
     </footer>

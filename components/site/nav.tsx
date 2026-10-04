@@ -1,31 +1,46 @@
 "use client";
 
-function scrollToId(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-}
+import { useEffect, useState, type CSSProperties } from "react";
 
+const LINKS = [
+  ["#understand", "理解业务"],
+  ["#explore", "发现市场"],
+  ["#account", "找到客户"],
+  ["#crm", "跟进"],
+  ["#chuhaicha", "出海查 AI"],
+  ["#founder", "关于我们"],
+] as const;
+
+/** 顶部导航：滚动后才有底色；跳转靠锚点 + CSS 的 scroll-margin-top / smooth 滚动 */
 export function SiteNav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const sync = () => setScrolled(window.scrollY > 8);
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    return () => window.removeEventListener("scroll", sync);
+  }, []);
+
   return (
-    <nav className="site-nav">
-      <div className="nav-in">
-        <a
-          className="brand"
-          href="#top"
-          onClick={(e) => {
-            e.preventDefault();
-            scrollToId("top");
-          }}
-        >
-          <svg viewBox="0 0 200 200" aria-hidden="true">
-            <g stroke="#26304F" strokeWidth="10" fill="none">
-              <path d="M29 155 50 44M50 44 171 155M142 44 29 155M142 44 97 109M97 109 171 155M142 44 171 155" />
+    <nav className={`site-nav${scrolled ? " scrolled" : ""}`} aria-label="主导航">
+      <div className="wrap nav-in">
+        <a className="brand" href="#top" aria-label="子午纪 Meridian">
+          <svg className="logo" viewBox="0 0 200 200" aria-hidden="true">
+            <g className="ln" stroke="currentColor" strokeWidth="10" fill="none" strokeLinecap="round">
+              {["M29 155 50 44", "M50 44 171 155", "M142 44 29 155", "M142 44 97 109", "M97 109 171 155", "M142 44 171 155"].map((d, i) => (
+                <path key={d} d={d} style={{ "--i": i } as CSSProperties} />
+              ))}
             </g>
-            <g fill="#26304F">
-              <circle cx="50" cy="44" r="15" />
-              <circle cx="142" cy="44" r="15" />
-              <circle cx="97" cy="109" r="15" />
-              <circle cx="29" cy="155" r="15" />
-              <circle cx="171" cy="155" r="15" />
+            <g className="nd" fill="currentColor">
+              {[
+                [50, 44],
+                [142, 44],
+                [97, 109],
+                [29, 155],
+                [171, 155],
+              ].map(([cx, cy], i) => (
+                <circle key={i} cx={cx} cy={cy} r="15" style={{ "--i": i } as CSSProperties} />
+              ))}
             </g>
           </svg>
           <span>
@@ -34,17 +49,19 @@ export function SiteNav() {
           </span>
         </a>
         <div className="nav-links">
-          <a href="#chuhaicha">出海查 AI</a>
-          <a href="#flow">拓客全流程</a>
-          <a href="#founder">关于我们</a>
+          {LINKS.map(([href, label]) => (
+            <a key={href} href={href}>
+              {label}
+            </a>
+          ))}
         </div>
         <div className="nav-ctas">
-          <button className="nav-cta" onClick={() => scrollToId("chuhaicha")}>
+          <a className="btn btn-ghost nav-free" href="#chuhaicha">
             免费用出海查
-          </button>
-          <button className="nav-cta" onClick={() => scrollToId("principles")}>
-            申请拓客引擎内测
-          </button>
+          </a>
+          <a className="btn btn-primary" href="#waitlist">
+            申请内测
+          </a>
         </div>
       </div>
     </nav>
