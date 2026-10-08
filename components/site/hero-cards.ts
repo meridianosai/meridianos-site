@@ -51,11 +51,11 @@ const MARKETS: Market[] = [
 ];
 
 export const HERO_PAIRS: readonly HeroPair[] = MARKETS.map(
-  ([id, region, iso, lat, lng, headline, field, company, name, role, avatar]) => ({
+  ([id, region, iso, lat, lng, headline, field, company, name, role, avatar]): HeroPair => ({
     id,
     region,
     iso,
-    at: [lng, lat] as LonLat,
+    at: [lng, lat],
     signal: { headline, company, field },
     contact: { name, role, company, avatar },
   }),

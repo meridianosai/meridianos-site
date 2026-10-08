@@ -13,6 +13,7 @@ export function BackedBand() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/antler-logo.png" alt="Antler" className="antler" width={4000} height={961} />
         </div>
+        {/* TODO: 数字和领域是占位，等拿到准确的交付数据再替换 */}
         <p className="backed-r">
           已为智能硬件、软件服务、AI 出海等领域的 <b>10+</b> 家头部企业交付 <b>200+</b> 份深度调研
         </p>

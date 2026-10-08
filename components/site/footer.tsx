@@ -5,11 +5,6 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="wrap">
         <Reveal as="p" className="foot-slog">
-          让每一个中国团队，
-          <br />
-          跟海外<em>本地老兵</em>一样能打。
-        </Reveal>
-        <Reveal as="p" className="foot-sub">
           让天下没有难做的海外生意。
         </Reveal>
 

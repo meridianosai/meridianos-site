@@ -1,81 +1,46 @@
-"use client";
-
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode, type RefObject } from "react";
 import {
   ArrowLeft,
   ArrowUpRight,
   BookOpen,
-  Bookmark,
   Briefcase,
-  Building2,
   Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   CircleHelp,
-  Compass,
   FileText,
   ListChecks,
-  Maximize2,
   PenLine,
-  Pencil,
-  Plus,
   Radar,
   RotateCcw,
-  ShieldCheck,
-  UserRound,
   Users,
-  X,
-  type LucideIcon,
 } from "lucide-react";
-import { AgentHeader, AgentInput, AgentMsg, AnsweredAsk, Crumb, SourceButton, Suggestions, TAB_COLORS, ToolRecord, UserMsg } from "./product-ui";
-import { prefersReducedMotion } from "./landing-context";
+import { AccountDemo, FollowButton, OpenRecordButton, type Anchor } from "./account-demo";
+import { ALEX, LOTUS, PRODUCTS, shortDate, type DemoContact, type DemoSignal } from "./demo-data";
+import { ActivityGroup, AgentMsg, AskUser, SourceButton, UserMsg } from "./product-ui";
 import { Reveal } from "./reveal";
 import { StepKicker } from "./step-kicker";
-import { useOnceVisible } from "./use-once-visible";
 
-type RecId = "co" | "pe" | "biz";
-
-const TABS: { id: RecId; label: string; icon: LucideIcon; color: string }[] = [
-  { id: "co", label: "Lotus Sound", icon: Building2, color: TAB_COLORS.company },
-  { id: "pe", label: "Alex Morgan", icon: UserRound, color: TAB_COLORS.person },
-  { id: "biz", label: "我的业务", icon: Briefcase, color: TAB_COLORS.business },
+const COMPANY_ANCHORS: Anchor[] = [
+  ["co-sum", "概况"],
+  ["co-ppl", "联系人", LOTUS.contacts.length],
+  ["co-sig", "信号", LOTUS.signals.length],
+  ["co-draft", "联系草稿"],
+  ["co-prog", "推进"],
+  ["co-task", "任务"],
 ];
-const CURRENT: Record<RecId, string> = { co: "Lotus Sound", pe: "Alex Morgan · Lotus Sound", biz: "声谷电子" };
-const ANCHORS: Record<"co" | "pe", [string, string, number?][]> = {
-  co: [
-    ["co-sum", "概况"],
-    ["co-ppl", "联系人", 2],
-    ["co-sig", "信号", 2],
-    ["co-draft", "联系草稿"],
-    ["co-prog", "推进"],
-    ["co-task", "任务"],
-  ],
-  pe: [
-    ["pe-sum", "概况"],
-    ["pe-org", "所属公司"],
-    ["pe-exp", "经历"],
-    ["pe-sig", "信号", 2],
-  ],
-};
+const PERSON_ANCHORS: Anchor[] = [
+  ["pe-sum", "概况"],
+  ["pe-org", "所属公司"],
+  ["pe-exp", "经历"],
+  ["pe-sig", "信号", ALEX.signals.length],
+];
 
-/** 3 找到目标客户：公司页、人的页面、我的业务是工作台里的三个标签（record-page / contact-profile / business-workbench） */
+/**
+ * 3 找到目标客户：文案、图例、公司页与人的页面都在服务端渲染；
+ * 切标签、锚点、关注、「我的业务」的就地修改在客户端的 AccountDemo 里。
+ */
 export function AccountSection() {
-  const frameRef = useRef<HTMLDivElement>(null);
-  const coRef = useRef<HTMLDivElement>(null);
-  const peRef = useRef<HTMLDivElement>(null);
-  const visible = useOnceVisible(frameRef, 0.3);
-  const [rec, setRec] = useState<RecId>("co");
-  const [followed, setFollowed] = useState(false);
-  const jumpCo = useRef<((section: string) => void) | null>(null);
-
-  // 这一节要讲的是信号：第一次看到时停到信号段
-  useEffect(() => {
-    if (!visible) return;
-    const t = setTimeout(() => jumpCo.current?.("co-sig"), prefersReducedMotion() ? 0 : 900);
-    return () => clearTimeout(t);
-  }, [visible]);
-
   return (
     <section className="sec acc" id="account">
       <div className="wrap">
@@ -86,195 +51,76 @@ export function AccountSection() {
             </StepKicker>
             <div className="sec-h">
               <h2>
-                谁在动，
+                这家公司
                 <br />
-                和你有什么关系。
+                最近在做什么，
+                <br />
+                该找谁谈？
               </h2>
-              <p>
-                公司页一页排开：概况、联系人、信号、联系草稿、推进、任务。人也有自己的页：现在在哪家、之前做过什么、最近说过什么。点联系人就开人的页，点所属公司再回来。
-              </p>
+              <p>这家公司最近的动静和该找的人，一页看全。顺着点进联系人，还能知道对方现在管什么、以前在哪做过。</p>
             </div>
           </Reveal>
           <Reveal as="ul" className="legend k">
             <li>
               <span className="lg-k d">
                 <Radar className="i" />
-                2026-09-18 · 示例动态
+                {LOTUS.signals[0].date} · 示例动态
               </span>
-              <span>什么时候、是哪类动静</span>
+              <span>是不是新鲜事</span>
             </li>
             <li>
-              <span className="lg-k t">准备扩充便携音频系列</span>
-              <span>发生了什么</span>
+              <span className="lg-k t">{LOTUS.signals[0].title}</span>
+              <span>它在忙什么</span>
             </li>
             <li>
               <span className="lg-k r">与你的关联</span>
-              <span>和你的哪款产品、哪个条件对得上</span>
+              <span>为什么跟你有关</span>
             </li>
             <li>
               <span className="lg-k n">下一步确认</span>
-              <span>联系之前先问清的事</span>
+              <span>开口前先问这句</span>
             </li>
             <li>
               <span className="lg-k b">
                 <BookOpen className="i" />
                 来源
               </span>
-              <span>点开就是它引用的原文</span>
+              <span>不信就点开原文</span>
             </li>
           </Reveal>
         </div>
       </div>
       <div className="wrap-wide">
         <Reveal>
-          <div
-            ref={frameRef}
-            className={`k acc-frame${rec === "biz" ? " biz" : ""}`}
-            role="group"
-            aria-label="示例：Lotus Sound 的公司页、Alex Morgan 的人物页与我的业务"
-          >
-            <div className="pane k-wb">
-              <div className="k-tabs" role="tablist" aria-label="工作台标签">
-                <span className="k-tab" style={{ "--tc": TAB_COLORS.explore } as CSSProperties}>
-                  <Compass className="i" />
-                  探索
-                </span>
-                {TABS.map(({ id, label, icon: Icon, color }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    role="tab"
-                    aria-selected={rec === id}
-                    className={`k-tab${rec === id ? " on" : ""}`}
-                    style={{ "--tc": color } as CSSProperties}
-                    onClick={() => setRec(id)}
-                  >
-                    <Icon className="i" />
-                    {label}
-                    <X className="i x" />
-                  </button>
-                ))}
-                <span className="k-tools">
-                  <span className="ibtn">
-                    <Maximize2 className="i" />
-                  </span>
-                </span>
-              </div>
-              <Crumb path={["全球", "东南亚", "越南", "胡志明市"]} className="k-crumb acc-crumb" />
-              <div className="k-body">
-                <RecordPage id="co" containerRef={coRef} hidden={rec !== "co"} jumpRef={jumpCo}>
-                  <CompanyHead followed={followed} onFollow={() => setFollowed((f) => !f)} />
-                  <CompanyBody onOpenPerson={() => setRec("pe")} />
-                </RecordPage>
-                <RecordPage id="pe" containerRef={peRef} hidden={rec !== "pe"}>
-                  <PersonHead />
-                  <PersonBody onOpenCompany={() => setRec("co")} />
-                </RecordPage>
-                <div className="rec" hidden={rec !== "biz"}>
-                  <BusinessPage />
-                </div>
-              </div>
-            </div>
-            <aside className="pane k-agent acc-ag" aria-hidden="true">
-              <AgentHeader current={CURRENT[rec]} />
-              <div className="k-ag-body">
-                <div className="k-log">
-                  <AnsweredAsk question="胡志明市，先了解哪家公司？" answer="Lotus Sound" />
-                  <UserMsg>先看Lotus Sound</UserMsg>
-                  <ToolRecord title="Lotus Sound · 工具执行记录" />
-                  <AgentMsg>Lotus Sound：2 条示例信号、2 位示例联系人已整理。先确认 2,000 件是否按单一型号、单一颜色计算。</AgentMsg>
-                  <Suggestions items={["核对合作条件", "看看联系人", "整理成报告", "起草联系开场"]} />
-                </div>
-              </div>
-              <AgentInput />
-            </aside>
-          </div>
-          <p className="frame-cap">示例 · 公司、人物与动态均为虚构；点标签、锚点或联系人卡试试</p>
+          <AccountDemo
+            company={{ head: <CompanyHead />, body: <CompanyBody />, anchors: COMPANY_ANCHORS }}
+            person={{ head: <PersonHead />, body: <PersonBody />, anchors: PERSON_ANCHORS }}
+            agent={{ log: <AgentLog />, suggestions: ["核对合作条件", "看看联系人", "起草联系开场"] }}
+          />
+          <p className="frame-cap">示例 · 公司、人物和动态都是虚构的，随手点点看。</p>
         </Reveal>
       </div>
     </section>
   );
 }
 
-/**
- * 资料页骨架：头部 → 吸顶的一排锚点 → 各段一页排开。锚点点击时平滑滚到对应段，滚动时跟随当前段；
- * 点了哪段就亮哪段，直到用户自己滚动（末尾几段滚不到顶，不能让滚动位置把它改成最后一段）。
- */
-function RecordPage({
-  id,
-  containerRef,
-  hidden,
-  jumpRef,
-  children,
-}: {
-  id: "co" | "pe";
-  containerRef: RefObject<HTMLDivElement | null>;
-  hidden: boolean;
-  /** 让外面能把页面停到某一段（进入视口时停到信号段） */
-  jumpRef?: RefObject<((section: string) => void) | null>;
-  children: [ReactNode, ReactNode];
-}) {
-  const anchors = ANCHORS[id];
-  const [active, setActive] = useState(anchors[0][0]);
-  const navRef = useRef<HTMLElement>(null);
-  const locked = useRef(false);
-
-  const jump = (section: string) => {
-    const box = containerRef.current;
-    const target = box?.querySelector<HTMLElement>(`#${section}`);
-    if (!box || !target) return;
-    locked.current = true;
-    setActive(section);
-    box.scrollTo({ top: target.offsetTop - (navRef.current?.offsetHeight ?? 0) + 1, behavior: prefersReducedMotion() ? "auto" : "smooth" });
-  };
-  useEffect(() => {
-    if (jumpRef) jumpRef.current = jump;
-  });
-
-  useEffect(() => {
-    const box = containerRef.current;
-    if (!box) return;
-    const unlock = () => (locked.current = false);
-    const onScroll = () => {
-      if (locked.current) return;
-      const nav = navRef.current?.offsetHeight ?? 0;
-      const y = box.scrollTop + nav + 24;
-      let on = anchors[0][0];
-      for (const [sid] of anchors) {
-        const el = box.querySelector<HTMLElement>(`#${sid}`);
-        if (el && el.offsetTop <= y) on = sid;
-      }
-      if (box.scrollTop + box.clientHeight >= box.scrollHeight - 4) on = anchors[anchors.length - 1][0];
-      setActive(on);
-    };
-    // pointerdown 覆盖拖滚动条；点锚点时 pointerdown 先于 click，锁会在 click 里重新挂上
-    const unlockEvents = ["wheel", "touchmove", "keydown", "pointerdown"] as const;
-    unlockEvents.forEach((t) => box.addEventListener(t, unlock, { passive: true }));
-    box.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      unlockEvents.forEach((t) => box.removeEventListener(t, unlock));
-      box.removeEventListener("scroll", onScroll);
-    };
-  }, [containerRef, anchors]);
-
-  const [head, body] = children;
+/** 右侧 Agent：接着「发现合适市场」最后一层往下，带着上一层的结尾 */
+function AgentLog() {
   return (
-    <div className="rec" ref={containerRef} hidden={hidden}>
-      {head}
-      <nav className="rec-anc" ref={navRef} aria-label={id === "co" ? "公司页分段" : "人的页面分段"}>
-        {anchors.map(([sid, label, count]) => (
-          <button key={sid} type="button" className={active === sid ? "on" : undefined} onClick={() => jump(sid)}>
-            {label}
-            {count ? <small>{count}</small> : null}
-          </button>
-        ))}
-      </nav>
-      {body}
+    <div className="k-log">
+      <ActivityGroup state="complete" summary="胡志明市 · 调用了 3 个工具" />
+      <AgentMsg>胡志明市的 3 家候选公司已整理。</AgentMsg>
+      <AskUser question="胡志明市，先了解哪家公司？" answer={LOTUS.name} />
+      <UserMsg>先看{LOTUS.name}</UserMsg>
+      <ActivityGroup state="complete" summary={`${LOTUS.name} · 调用了 3 个工具`} />
+      <AgentMsg>
+        {LOTUS.name}：2 条示例信号、2 位示例联系人已整理。{LOTUS.check}
+      </AgentMsg>
     </div>
   );
 }
 
-function CompanyHead({ followed, onFollow }: { followed: boolean; onFollow(): void }) {
+function CompanyHead() {
   return (
     <>
       <div className="rec-h">
@@ -282,7 +128,7 @@ function CompanyHead({ followed, onFollow }: { followed: boolean; onFollow(): vo
           <ArrowLeft className="i" />
         </span>
         <div>
-          <h4>Lotus Sound</h4>
+          <h4>{LOTUS.name}</h4>
           <span className="mi mu">示例</span>
         </div>
         <div className="rec-nav">
@@ -294,16 +140,15 @@ function CompanyHead({ followed, onFollow }: { followed: boolean; onFollow(): vo
           <span className="ibtn">
             <ChevronRight className="i" />
           </span>
-          <button type="button" className={`rec-follow${followed ? " on" : ""}`} aria-pressed={followed} onClick={onFollow}>
-            <Bookmark className="i" />
-            <span>{followed ? "已关注" : "关注"}</span>
-          </button>
+          <FollowButton />
         </div>
       </div>
       <div className="rec-id">
-        <span className="rec-mono">LS</span>
+        <span className="rec-mono">{LOTUS.initials}</span>
         <div>
-          <span className="mi mu">音频品牌 · 胡志明市，越南</span>
+          <span className="mi mu">
+            {LOTUS.kind} · {LOTUS.place}
+          </span>
           <span className="chip">待评估</span>
         </div>
         <SourceButton />
@@ -312,31 +157,43 @@ function CompanyHead({ followed, onFollow }: { followed: boolean; onFollow(): vo
   );
 }
 
-const COMPARE: [string, string, string, string, boolean][] = [
-  ["产品", "通勤真无线系列", "A6 · 蓝牙 5.3 · 25h · IPX5", "可对照", true],
-  ["首单", "2,000 件", "2,000 件起订", "数量可对照", true],
-  ["包装", "品牌标识与独立零售包装", "支持 OEM / ODM；具体包装待确认", "待确认", false],
-  ["交付", "样品确认后 6–8 周", "材料未给出交期与打样耗时", "待确认", false],
-  ["报价", "目标采购价尚未提供", "FOB $12.4–15.8", "待确认", false],
+const COMPARE: [item: string, need: string, mine: string, mark: string, ok: boolean][] = [
+  ["产品", LOTUS.demand.use, `A6 · ${PRODUCTS.A6.specs}`, "可对照", true],
+  ["首单", LOTUS.demand.firstOrder, `${PRODUCTS.A6.moq} 件起订`, "数量可对照", true],
+  ["包装", LOTUS.demand.packaging, "支持 OEM / ODM；具体包装待确认", "待确认", false],
+  ["交付", LOTUS.demand.delivery, "材料未给出交期与打样耗时", "待确认", false],
+  ["报价", "目标采购价尚未提供", `FOB ${PRODUCTS.A6.price}`, "待确认", false],
 ];
 
-function CompanyBody({ onOpenPerson }: { onOpenPerson(): void }) {
+const [ALEX_FIRST] = ALEX.name.split(" ");
+const DRAFT = `Hi ${ALEX_FIRST},
+
+I’m reaching out from Shenggu Acoustics about a potential collaboration with ${LOTUS.name}. We develop wireless audio products with OEM / ODM support.
+
+Our A6 true wireless earbuds may be relevant to your range. Would an initial order of 2,000 units for one model and color fit your launch plan?
+
+I can share product specifications and a sample proposal once we understand your requirements.
+
+Best regards,
+Shenggu Acoustics`;
+
+function CompanyBody() {
   return (
     <>
       <section className="rec-sec" id="co-sum">
         <h5>概况</h5>
-        <p className="lead">面向日常通勤与运动场景，销售无线耳机与便携音箱。</p>
+        <p className="lead">{LOTUS.summary}</p>
         <div className="k-fit">
           <div className="k-fit-top">
             <div>
-              <span className="mi">可先评估样品</span>
-              <b>先确认 2,000 件是否按单一型号、单一颜色计算。</b>
+              <span className="mi">{LOTUS.fitLabel}</span>
+              <b>{LOTUS.check}</b>
             </div>
             <SourceButton />
           </div>
           <div className="k-fit-acts">
             <span>
-              <Users className="i" />看 2 位联系人
+              <Users className="i" />看 {LOTUS.contacts.length} 位联系人
             </span>
             <span>
               <PenLine className="i" />
@@ -380,90 +237,54 @@ function CompanyBody({ onOpenPerson }: { onOpenPerson(): void }) {
       </section>
       <section className="rec-sec" id="co-ppl">
         <h5>
-          联系人<small>2</small>
+          联系人<small>{LOTUS.contacts.length}</small>
         </h5>
         <div className="ppl">
-          <button type="button" className="ppl-c" onClick={onOpenPerson}>
-            <PersonCardBody initials="AM" name="Alex Morgan" role="产品采购负责人" duty="确认首单规模、报价与供应商名单" />
-          </button>
-          <div className="ppl-c static">
-            <PersonCardBody initials="SR" name="Sam Rivera" role="产品开发经理" duty="参与样品评估与交付规格确认" />
-          </div>
+          {LOTUS.contacts.map((c, i) =>
+            i === 0 ? (
+              <OpenRecordButton key={c.name} to="pe" className="ppl-c">
+                <PersonCardBody contact={c} />
+              </OpenRecordButton>
+            ) : (
+              // 示例只做了第一位联系人的页面
+              <div key={c.name} className="ppl-c static">
+                <PersonCardBody contact={c} />
+              </div>
+            ),
+          )}
         </div>
       </section>
       <section className="rec-sec" id="co-sig">
         <h5>
-          信号<small>2</small>
+          信号<small>{LOTUS.signals.length}</small>
         </h5>
-        <Signal
-          date="2026-09-18 · 示例动态"
-          title="准备扩充便携音频系列"
-          observation="面向日常通勤与运动场景，销售无线耳机与便携音箱。示例业务记录提及准备扩充便携音频系列，尚未发布正式采购单。"
-          relevance="可从 A6 真无线耳机的小批量贴牌切入，先核对渠道售价与目标毛利。"
-          next="先确认 2,000 件是否按单一型号、单一颜色计算。"
-          progress
-        />
-        <Signal
-          date="2026-09-10 · 示例动态"
-          title="贴牌合作入口新增包装选项"
-          observation="示例合作页面列出自有标识、独立包装和样品评估三个步骤。"
-          relevance="OEM / ODM 能力有对照点，但包装打样费用仍未知。"
-          next="确认计划是否仍在推进，以及哪一位负责最终采购决策。"
-          progress
-        />
+        {LOTUS.signals.map((s) => (
+          <SignalCard key={s.title} signal={s} kind="示例动态" progress />
+        ))}
       </section>
       <section className="rec-sec" id="co-draft">
         <h5>联系草稿</h5>
         <div className="draft-note">
-          <span>先确认 2,000 件是否按单一型号、单一颜色计算。</span>
+          <span>{LOTUS.check}</span>
           <SourceButton />
         </div>
         <div className="draft-h">
-          <b>给 Alex Morgan 的草稿</b>
+          <b>给 {ALEX.name} 的草稿</b>
           <span>
             <Check className="i" />
             未编辑
           </span>
         </div>
-        <div className="draft-b">
-          {`Hi Alex,
-
-I’m reaching out from Shenggu Acoustics about a potential collaboration with Lotus Sound. We develop wireless audio products with OEM / ODM support.
-
-Our A6 true wireless earbuds may be relevant to your range. Would an initial order of 2,000 units for one model and color fit your launch plan?
-
-I can share product specifications and a sample proposal once we understand your requirements.
-
-Best regards,
-Shenggu Acoustics`}
-        </div>
+        <div className="draft-b">{DRAFT}</div>
         <p className="draft-f">示例草稿 · 未发送</p>
       </section>
       <section className="rec-sec" id="co-prog">
         <h5>推进</h5>
         <div className="form-k">
-          <div className="fk-l">
-            对象
-            <span className="fk">
-              公司 · Lotus Sound
-              <ChevronDown className="i" />
-            </span>
-          </div>
+          <FakeField label="对象" value={`公司 · ${LOTUS.name}`} />
           <div className="row">
-            <div className="fk-l">
-              跟进状态
-              <span className="fk">
-                待评估
-                <ChevronDown className="i" />
-              </span>
-            </div>
-            <div className="fk-l">
-              优先级
-              <span className="fk">
-                普通
-                <ChevronDown className="i" />
-              </span>
-            </div>
+            <FakeField label="跟进状态" value="待评估" />
+            <FakeField label="优先级" value="普通" />
           </div>
           <div className="fk-l">
             下一步行动
@@ -473,57 +294,56 @@ Shenggu Acoustics`}
       </section>
       <section className="rec-sec last" id="co-task">
         <h5>任务</h5>
-        <TaskRow label="近期信号" value="09-18 准备扩充便携音频系列" />
-        <TaskRow label="采购决策人" value="Alex Morgan · 产品采购负责人" />
+        <TaskRow label="近期信号" value={`${shortDate(LOTUS.signals[0].date)} ${LOTUS.signals[0].title}`} />
+        <TaskRow label="采购决策人" value={`${ALEX.name} · ${ALEX.role}`} />
       </section>
     </>
   );
 }
 
-function PersonCardBody({ initials, name, role, duty }: { initials: string; name: string; role: string; duty: string }) {
+function FakeField({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="fk-l">
+      {label}
+      <span className="fk">
+        {value}
+        <ChevronDown className="i" />
+      </span>
+    </div>
+  );
+}
+
+/** 按钮里只能放行内内容：职责那一行用 span，不用 p */
+function PersonCardBody({ contact }: { contact: DemoContact }) {
   return (
     <>
-      <span className="ppl-av">{initials}</span>
-      <b>{name}</b>
+      <span className="ppl-av">{contact.initials}</span>
+      <b>{contact.name}</b>
       <ArrowUpRight className="i" />
-      <span className="mi">{role}</span>
-      <p>{duty}</p>
+      <span className="mi">{contact.role}</span>
+      <span className="duty">{contact.duty}</span>
       <span className="chip">待评估</span>
     </>
   );
 }
 
-function Signal({
-  date,
-  title,
-  observation,
-  relevance,
-  next,
-  progress,
-}: {
-  date: string;
-  title: string;
-  observation: string;
-  relevance: string;
-  next?: string;
-  progress?: boolean;
-}) {
+function SignalCard({ signal, kind, progress }: { signal: DemoSignal; kind: string; progress?: boolean }) {
   return (
     <article className="sig">
       <div className="sig-d">
         <Radar className="i" />
-        {date}
+        {signal.date} · {kind}
         <SourceButton />
       </div>
-      <h6>{title}</h6>
-      <p className="obs mu">{observation}</p>
+      <h6>{signal.title}</h6>
+      <p className="obs mu">{signal.observation}</p>
       <div className="rel">
         <span className="lb">与你的关联</span>
-        {relevance}
-        {next ? (
+        {signal.relevance}
+        {signal.next ? (
           <>
             <span className="lb n">下一步确认</span>
-            {next}
+            {signal.next}
           </>
         ) : null}
       </div>
@@ -560,15 +380,15 @@ function PersonHead() {
     <>
       <div className="rec-h">
         <div>
-          <h4>Alex Morgan</h4>
+          <h4>{ALEX.name}</h4>
           <span className="mi mu">示例</span>
         </div>
       </div>
       <div className="rec-id">
-        <span className="rec-mono p">AM</span>
+        <span className="rec-mono p">{ALEX.initials}</span>
         <div>
           <span className="mi mu">
-            产品采购负责人 · <span className="lk">Lotus Sound</span>
+            {ALEX.role} · <span className="lk">{LOTUS.name}</span>
           </span>
           <span className="chip">待评估</span>
         </div>
@@ -578,36 +398,34 @@ function PersonHead() {
   );
 }
 
-function PersonBody({ onOpenCompany }: { onOpenCompany(): void }) {
+function PersonBody() {
   return (
     <>
       <section className="rec-sec" id="pe-sum">
         <h5>概况</h5>
-        <p className="lead">确认首单规模、报价与供应商名单</p>
+        <p className="lead">{ALEX.duty}</p>
         <div className="k-fit muted">
           <span className="mi">可以先问</span>
-          <p>首单数量、目标价和打样时间</p>
+          <p>{ALEX.ask}</p>
         </div>
       </section>
       <section className="rec-sec" id="pe-org">
         <h5>所属公司</h5>
-        <button type="button" className="org-c" onClick={onOpenCompany}>
-          <span className="rec-mono">LS</span>
-          <b>Lotus Sound</b>
+        <OpenRecordButton to="co" className="org-c">
+          <span className="rec-mono">{LOTUS.initials}</span>
+          <b>{LOTUS.name}</b>
           <ArrowUpRight className="i" />
-          <span className="mi mu">音频品牌 · 2022 – 至今</span>
-          <p>面向日常通勤与运动场景，销售无线耳机与便携音箱。</p>
-          <span className="mi ok">可先评估样品</span>
-        </button>
+          <span className="mi mu">
+            {LOTUS.kind} · {ALEX.since} – 至今
+          </span>
+          <span className="duty">{LOTUS.summary}</span>
+          <span className="mi ok">{LOTUS.fitLabel}</span>
+        </OpenRecordButton>
       </section>
       <section className="rec-sec" id="pe-exp">
         <h5>经历</h5>
         <ol className="exp">
-          {[
-            ["产品采购负责人", "Lotus Sound · 2022 – 至今"],
-            ["采购经理", "Brightline Retail · 2018 – 2022"],
-            ["采购专员", "Coastline Electronics · 2015 – 2018"],
-          ].map(([title, where]) => (
+          {ALEX.experience.map(([title, where]) => (
             <li key={title}>
               <b>
                 <Briefcase className="i" />
@@ -620,146 +438,12 @@ function PersonBody({ onOpenCompany }: { onOpenCompany(): void }) {
       </section>
       <section className="rec-sec last" id="pe-sig">
         <h5>
-          信号<small>2</small>
+          信号<small>{ALEX.signals.length}</small>
         </h5>
-        <Signal
-          date="2026-09-05 · 个人动态"
-          title="在品类交流会上谈到下一季的贴牌计划"
-          observation="提到下一季考虑引入贴牌耳机，更关注包装与交期。"
-          relevance="与 A6 贴牌方向一致，可以从包装和交期切入。"
-        />
-        <Signal
-          date="2026-08-20 · 个人动态"
-          title="职责扩展到全部音频品类"
-          observation="职业资料显示负责范围从耳机扩展到全部音频采购。"
-          relevance="便携音箱也可能纳入同一次讨论。"
-        />
+        {ALEX.signals.map((s) => (
+          <SignalCard key={s.title} signal={s} kind="个人动态" />
+        ))}
       </section>
-    </>
-  );
-}
-
-/* ---------- 我的业务：字段就地改；改过的值在标签旁标出用户修改，原来的来源按钮不动 ---------- */
-
-type Field = { key: string; label: string; value: string; note?: string };
-
-const BUSINESS: { title: string; icon?: LucideIcon; fields: Field[]; more: boolean }[] = [
-  {
-    title: "业务与能力",
-    more: true,
-    fields: [
-      { key: "name", label: "业务名称", value: "声谷电子" },
-      { key: "direction", label: "业务方向", value: "音频产品研发与制造" },
-      { key: "ability", label: "合作能力", value: "OEM / ODM · 贴牌与定制" },
-    ],
-  },
-  {
-    title: "产品与服务",
-    more: true,
-    fields: [
-      { key: "a6", label: "A6 · TWS 真无线耳机", value: "蓝牙 5.3 · 25h · IPX5" },
-      { key: "h2", label: "H2 · 头戴式主动降噪耳机", value: "ANC · 40mm · 40h" },
-      { key: "s3", label: "S3 · 便携蓝牙音箱", value: "10W · IPX7 · 12h" },
-    ],
-  },
-  {
-    title: "合作条件",
-    more: true,
-    fields: [
-      { key: "a6p", label: "A6 报价", value: "FOB $12.4–15.8" },
-      { key: "a6m", label: "A6 起订量", value: "2,000 件" },
-      { key: "h2p", label: "H2 报价", value: "FOB $28.5–36.0" },
-      { key: "h2m", label: "H2 起订量", value: "1,000 件" },
-    ],
-  },
-  {
-    title: "经验与资质",
-    icon: ShieldCheck,
-    more: false,
-    fields: [
-      { key: "markets", label: "已有市场经历", value: "美国、越南、德国" },
-      { key: "certs", label: "材料提及的资质", value: "CE、FCC、RoHS、BQB、ISO 9001、BSCI", note: "资质的有效期与覆盖范围待核验。" },
-    ],
-  },
-];
-
-function BusinessPage() {
-  const [values, setValues] = useState<Record<string, string>>({});
-  const [editing, setEditing] = useState<string | null>(null);
-
-  function commit(field: Field, raw: string) {
-    const v = raw.trim();
-    setEditing(null);
-    if (v && v !== (values[field.key] ?? field.value)) setValues((s) => ({ ...s, [field.key]: v }));
-  }
-  function onKey(e: KeyboardEvent<HTMLInputElement>, field: Field) {
-    if (e.key === "Enter" && !e.nativeEvent.isComposing) commit(field, e.currentTarget.value);
-    if (e.key === "Escape") setEditing(null);
-  }
-
-  return (
-    <>
-      <div className="rec-h">
-        <div>
-          <h4>我的业务</h4>
-        </div>
-      </div>
-      <div className="bz-card">
-        <span className="bz-ic">
-          <Building2 className="i" />
-        </span>
-        <div>
-          <b>{values.name ?? "声谷电子"}</b>
-          <span>
-            <Check className="i" />
-            示例档案 · 保存在此浏览器
-          </span>
-        </div>
-      </div>
-      {BUSINESS.map(({ title, icon: Icon, fields, more }, si) => (
-        <section key={title} className={`rec-sec bz${si === BUSINESS.length - 1 ? " last" : ""}`}>
-          <h5>
-            {Icon ? <Icon className="i bz-h-ic" /> : null}
-            {title}
-          </h5>
-          {fields.map((f) => {
-            const changed = f.key in values;
-            return (
-              <div key={f.key} className="bz-row">
-                <div>
-                  <span title={changed ? "你改过这个值，原始来源仍保留" : undefined}>
-                    {f.label}
-                    {changed ? <Pencil className="i" /> : null}
-                  </span>
-                  {editing === f.key ? (
-                    <input
-                      className="bz-input"
-                      defaultValue={values[f.key] ?? f.value}
-                      aria-label={`修改${f.label}`}
-                      autoFocus
-                      onBlur={(e) => commit(f, e.currentTarget.value)}
-                      onKeyDown={(e) => onKey(e, f)}
-                    />
-                  ) : (
-                    <b>{values[f.key] ?? f.value}</b>
-                  )}
-                  {f.note ? <em>{f.note}</em> : null}
-                </div>
-                <button type="button" className="ibtn bz-ed" aria-label={`修改${f.label}`} onClick={() => setEditing(f.key)}>
-                  <Pencil className="i" />
-                </button>
-                <SourceButton />
-              </div>
-            );
-          })}
-          {more ? (
-            <span className="bz-add">
-              <Plus className="i" />
-              补充
-            </span>
-          ) : null}
-        </section>
-      ))}
     </>
   );
 }

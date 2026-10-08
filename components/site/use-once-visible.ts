@@ -1,13 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type RefObject } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef, useState, type RefObject } from "react";
+import { useMotionAllowed } from "./motion";
 
 /** 元素第一次进入视口（按 threshold 比例）时调一次 onVisible */
 export function useOnVisible(ref: RefObject<Element | null>, threshold: number, onVisible: () => void) {
-  const latest = useRef(onVisible);
-  useEffect(() => {
-    latest.current = onVisible;
-  });
+  const notify = useEffectEvent(onVisible);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -15,7 +13,7 @@ export function useOnVisible(ref: RefObject<Element | null>, threshold: number, 
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
           io.disconnect();
-          latest.current();
+          notify();
         }
       },
       { threshold },
@@ -30,20 +28,6 @@ export function useOnceVisible(ref: RefObject<Element | null>, threshold = 0.3):
   const [seen, setSeen] = useState(false);
   useOnVisible(ref, threshold, () => setSeen(true));
   return seen;
-}
-
-const noSubscribe = () => () => {};
-
-/**
- * 能不能放动效：服务端与首次水合按「不能」渲染（直接给终态，没有脚本也看得到全部内容），
- * 浏览器里没开「减少动态效果」时才为 true。
- */
-export function useMotionAllowed(): boolean {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    () => false,
-  );
 }
 
 /**

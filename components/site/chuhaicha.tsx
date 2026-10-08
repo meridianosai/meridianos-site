@@ -11,26 +11,26 @@ export function Chuhaicha() {
           </p>
           <h2>先免费查一家：出海查 AI</h2>
           <p className="lead">
-            国内做生意先查企查查，出海做生意先用出海查。输入一家海外公司，拿到工商信息、经营信号和一份 AI 深度报告，告诉你该从哪里切入。
+            国内做生意先查企查查，出海做生意先用出海查。输入一家海外公司的名字就能查。
           </p>
           <ul className="chq-list">
             <li>
-              <b>工商信息核验</b>注册信息、董事结构、存续状态，对接官方数据库
+              <b>注册信息</b>公司还在不在经营、董事是谁，数据来自官方数据库。
             </li>
             <li>
-              <b>AI 深度调研</b>采购动向、渠道结构、决策人，每条结论标注来源与置信度
+              <b>调研报告</b>它在买什么、走哪些渠道、谁拍板，每条结论都标了来源和可信度。
             </li>
             <li>
-              <b>切入路径建议</b>上传你的产品资料，报告直接告诉你这家客户该怎么谈
+              <b>怎么谈</b>上传你的产品资料，报告会写这家客户适合从哪里谈起。
             </li>
           </ul>
           <div className="qr-row">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/chuhaicha-qr.jpg" alt="出海查AI 小程序码" width={104} height={104} loading="lazy" decoding="async" />
             <p>
-              <b>微信扫一扫</b>，或搜索小程序「出海查AI」
+              <b>微信扫码</b>，或搜索小程序「出海查AI」
               <br />
-              免费开始第一次调研
+              第一次调研免费。
             </p>
           </div>
         </Reveal>

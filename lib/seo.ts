@@ -14,7 +14,7 @@ export const SITE_NAME = "子午纪 Meridian";
 export const SITE_TITLE_DEFAULT = "子午纪 Meridian · 找准海外买家的采购信号";
 export const SITE_TITLE_TEMPLATE = "%s · 子午纪 Meridian";
 export const SITE_DESCRIPTION =
-  "子午纪 Meridian：海外买家每天都在招人、上新、扩品类，MeridianAI Fleet 先读懂你的产品，再找出和你对得上的采购信号：谁在动、和哪款产品有关、联系前先问什么，每条都能点开原文。出海查 AI 免费查任意海外公司。";
+  "子午纪 Meridian：MeridianAI Fleet 先读你的官网和产品资料，再找出和你产品有关的海外采购信号，以及该联系的人，每条都能点开原文核对。出海查 AI 可以免费查一家海外公司。";
 
 export const SITE_KEYWORDS = [
   "出海",

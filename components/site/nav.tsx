@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
+import { WAITLIST_ID } from "./landing-context";
 
 const LINKS = [
   ["#understand", "理解业务"],
@@ -28,7 +29,7 @@ export function SiteNav() {
           <svg className="logo" viewBox="0 0 200 200" aria-hidden="true">
             <g className="ln" stroke="currentColor" strokeWidth="10" fill="none" strokeLinecap="round">
               {["M29 155 50 44", "M50 44 171 155", "M142 44 29 155", "M142 44 97 109", "M97 109 171 155", "M142 44 171 155"].map((d, i) => (
-                <path key={d} d={d} style={{ "--i": i } as CSSProperties} />
+                <path key={d} d={d} style={{ "--i": i }} />
               ))}
             </g>
             <g className="nd" fill="currentColor">
@@ -39,7 +40,7 @@ export function SiteNav() {
                 [29, 155],
                 [171, 155],
               ].map(([cx, cy], i) => (
-                <circle key={i} cx={cx} cy={cy} r="15" style={{ "--i": i } as CSSProperties} />
+                <circle key={i} cx={cx} cy={cy} r="15" style={{ "--i": i }} />
               ))}
             </g>
           </svg>
@@ -59,7 +60,7 @@ export function SiteNav() {
           <a className="btn btn-ghost nav-free" href="#chuhaicha">
             免费用出海查
           </a>
-          <a className="btn btn-primary" href="#waitlist">
+          <a className="btn btn-primary" href={`#${WAITLIST_ID}`}>
             申请内测
           </a>
         </div>

@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, type SyntheticEvent } from "react";
+import { useEffect, useEffectEvent, useRef, useState, type SyntheticEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MeridianLines } from "./meridian-lines";
-import { prefersReducedMotion, useLanding, type Prefill } from "./landing-context";
+import { useLanding, WAITLIST_ID, type Prefill } from "./landing-context";
+import { prefersReducedMotion } from "./motion";
 import { Reveal } from "./reveal";
 
-type Status = "idle" | "submitting" | "done" | "error";
+type FormState = { kind: "idle" } | { kind: "submitting" } | { kind: "done" } | { kind: "error"; message: string };
 
 /**
  * 内测申请。提交后 POST /api/waitlist，线索落库到复用自 meridian-ai 的
@@ -15,28 +16,32 @@ type Status = "idle" | "submitting" | "done" | "error";
  * 首屏输入框里识别到的官网会预填到「公司 / 官网」，落库时走原来的 company 字段。
  */
 export function Waitlist() {
-  const { prefill } = useLanding();
-  const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState("");
+  const bus = useLanding();
+  const [form, setForm] = useState<FormState>({ kind: "idle" });
   const [company, setCompany] = useState("");
+  const [fromHero, setFromHero] = useState<Prefill | null>(null);
   const contactRef = useRef<HTMLInputElement>(null);
+  const focusTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // 首屏带过来的官网填进「公司 / 官网」：在渲染时跟着 prefill 调整，之后用户可以自己改
-  const [syncedPrefill, setSyncedPrefill] = useState<Prefill | null>(null);
-  if (prefill !== syncedPrefill) {
-    setSyncedPrefill(prefill);
-    if (prefill?.site) setCompany(prefill.site);
-  }
+  // 首屏提交是一次事件：在回调里预填、在滚动停下后聚焦联系方式
+  const onPrefill = useEffectEvent((p: Prefill) => {
+    setFromHero(p);
+    if (p.site) setCompany(p.site);
+    clearTimeout(focusTimer.current);
+    focusTimer.current = setTimeout(() => contactRef.current?.focus({ preventScroll: true }), prefersReducedMotion() ? 0 : 900);
+  });
   useEffect(() => {
-    if (!prefill) return;
-    // 等首屏滚过来再把焦点放进联系方式，避免打断平滑滚动
-    const t = setTimeout(() => contactRef.current?.focus({ preventScroll: true }), prefersReducedMotion() ? 0 : 900);
-    return () => clearTimeout(t);
-  }, [prefill]);
+    const off = bus.onPrefill((p) => onPrefill(p));
+    const timer = focusTimer;
+    return () => {
+      off();
+      clearTimeout(timer.current);
+    };
+  }, [bus]);
 
   async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (status === "submitting") return;
+    if (form.kind === "submitting") return;
 
     const data = new FormData(e.currentTarget);
     const payload = {
@@ -45,14 +50,12 @@ export function Waitlist() {
       name: String(data.get("name") ?? "").trim(),
     };
     if (!payload.contact) {
-      setError("请填写微信号或邮箱");
-      setStatus("error");
+      setForm({ kind: "error", message: "请填写微信号或邮箱" });
       contactRef.current?.focus();
       return;
     }
 
-    setStatus("submitting");
-    setError("");
+    setForm({ kind: "submitting" });
     try {
       const res = await fetch("/api/waitlist", {
         method: "POST",
@@ -66,20 +69,22 @@ export function Waitlist() {
       if (!res.ok || !json.ok) {
         throw new Error(json.error || "提交失败,请稍后再试");
       }
-      setStatus("done");
+      setForm({ kind: "done" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "提交失败,请稍后再试");
-      setStatus("error");
+      setForm({ kind: "error", message: err instanceof Error ? err.message : "提交失败,请稍后再试" });
     }
   }
 
-  const busy = status === "submitting";
-  const fromHero = prefill
-    ? `已带上你在首屏填的${prefill.site ? "官网" : "内容"}${prefill.files ? `和 ${prefill.files} 份文件的名字` : ""}。内测开放时，就从这份资料开始聊。`
+  const busy = form.kind === "submitting";
+  // 只说真的带过来的东西：识别到官网才说填好了；文件和其余文字不会提交
+  const heroNote = fromHero
+    ? fromHero.site
+      ? "已把你在首屏贴的官网填进「公司 / 官网」。"
+      : "首屏填的内容不会上传。内测开放后，在产品里贴同样的资料就能开始。"
     : null;
 
   return (
-    <section className="sec wl" id="waitlist">
+    <section className="sec wl" id={WAITLIST_ID}>
       <svg className="wl-mer" viewBox="-310 -310 620 620" aria-hidden="true">
         <MeridianLines />
       </svg>
@@ -88,7 +93,7 @@ export function Waitlist() {
           <h2>申请 MeridianAI Fleet 内测</h2>
           <p>每月开放少量席位。留下联系方式，开放时第一批通知你；出海查用户优先。</p>
 
-          {status === "done" ? (
+          {form.kind === "done" ? (
             <div className="wl-ok" role="status">
               已收到。开放时第一批联系你。
             </div>
@@ -103,7 +108,9 @@ export function Waitlist() {
                 autoComplete="email"
                 required
                 disabled={busy}
-                onChange={() => status === "error" && setStatus("idle")}
+                onChange={() => {
+                  if (form.kind === "error") setForm({ kind: "idle" });
+                }}
               />
               <div className="row">
                 <Input
@@ -125,13 +132,13 @@ export function Waitlist() {
                   disabled={busy}
                 />
               </div>
-              {fromHero ? <p className="wl-from">{fromHero}</p> : null}
+              {heroNote ? <p className="wl-from">{heroNote}</p> : null}
               <Button type="submit" className="btn btn-primary" disabled={busy}>
                 {busy ? "提交中…" : "申请内测"}
               </Button>
-              {status === "error" ? (
+              {form.kind === "error" ? (
                 <p className="wl-err" role="alert">
-                  {error}
+                  {form.message}
                 </p>
               ) : null}
             </form>
